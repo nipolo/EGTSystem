@@ -1,0 +1,25 @@
+version: '3.4'
+
+services:
+  json.api:
+    image: ${DOCKER_REGISTRY-}jsonapi
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Debug
+      - ASPNETCORE_URLS=http://+:80
+    build:
+      context: .
+      dockerfile: ../src/Applications/ApiGateway/Dockerfile
+    ports:
+      - "5020:80"
+
+  redisServer:
+    image: redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+  redisReJsonServer:
+    image: redislabs/rejson
+    restart: always
+    ports:
+      - "6380:6379"
