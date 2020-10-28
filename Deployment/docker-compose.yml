@@ -18,6 +18,12 @@ services:
     ports:
       - "6379:6379"
 
+  redisTestServer:
+    image: redis
+    restart: always
+    ports:
+      - "6381:6379"
+
   redisReJsonServer:
     image: redislabs/rejson
     restart: always

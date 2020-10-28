@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 using EGT.ApiGateway.DomainModels;
 
@@ -7,22 +8,22 @@ using StackExchange.Redis;
 
 namespace EGT.ApiGateway.ApplicationServices
 {
-    public class RedisCacheSessionService : ISessionService, IDisposable
+    public class SessionServiceStackExchangeRedis : ISessionService, IDisposable
     {
         private readonly ConnectionMultiplexer _muxer;
-        public RedisCacheSessionService(ConnectionMultiplexer muxer)
+        public SessionServiceStackExchangeRedis(ConnectionMultiplexer muxer)
         {
             _muxer = muxer;
         }
 
-        public (UserSession, bool) CreateSession(UserSession userSession, int ttlInSeconds)
+        public async Task<(UserSession, bool)> CreateSession(UserSession userSession, int ttlInSeconds)
         {
             var connection = _muxer.GetDatabase();
 
             var sessionIdKey = new RedisKey(RedisKeysPrefixes.SESSION + ":" + userSession.SessionId.ToString());
-            if (connection.HashGetAll(sessionIdKey).Count() == 0)
+            if ((await connection.HashGetAllAsync(sessionIdKey)).Count() == 0)
             {
-                connection.HashSet(
+                await connection.HashSetAsync(
                     sessionIdKey,
                     new HashEntry[]
                     {
@@ -31,7 +32,7 @@ namespace EGT.ApiGateway.ApplicationServices
                         new HashEntry(new RedisValue(nameof(userSession.Timestamp)), new RedisValue(userSession.Timestamp.ToString())),
                         new HashEntry(new RedisValue(nameof(userSession.SessionId)), new RedisValue(userSession.SessionId.ToString())),
                     });
-                connection.KeyExpire(sessionIdKey, TimeSpan.FromSeconds(ttlInSeconds));
+                await connection.KeyExpireAsync(sessionIdKey, TimeSpan.FromSeconds(ttlInSeconds));
             }
             else
             {
@@ -43,21 +44,21 @@ namespace EGT.ApiGateway.ApplicationServices
             return (userSession, true);
         }
 
-        public UserSession GetSession(long sessionId)
+        public async Task<UserSession> GetSession(long sessionId)
         {
             IDatabase connection = _muxer.GetDatabase();
 
-            var redisKey = new RedisKey(sessionId.ToString());
-            if (connection.HashGetAll(redisKey).Count() == 0)
+            var redisKey = new RedisKey(RedisKeysPrefixes.SESSION + ":" + sessionId.ToString());
+            if ((await connection.HashGetAllAsync(redisKey)).Count() == 0)
             {
                 return null;
             }
 
             var result = new UserSession
             {
-                RequestId = connection.HashGet(redisKey, nameof(UserSession.RequestId)),
-                Player = Convert.ToInt32(connection.HashGet(redisKey, nameof(UserSession.Player)).ToString()),
-                Timestamp = long.Parse(connection.HashGet(redisKey, nameof(UserSession.Timestamp)).ToString()),
+                RequestId = await connection.HashGetAsync(redisKey, nameof(UserSession.RequestId)),
+                Player = Convert.ToInt32((await connection.HashGetAsync(redisKey, nameof(UserSession.Player))).ToString()),
+                Timestamp = long.Parse((await connection.HashGetAsync(redisKey, nameof(UserSession.Timestamp))).ToString()),
                 SessionId = sessionId
             };
 

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 
 using EGT.ApiGateway.DomainModels;
 
@@ -11,7 +12,7 @@ namespace EGT.ApiGateway.ApplicationServices
         private Dictionary<long, UserSession> _sessions = new Dictionary<long, UserSession>();
         private ReaderWriterLock _lock = new ReaderWriterLock();
 
-        public UserSession GetSession(long sessionId)
+        public Task<UserSession> GetSession(long sessionId)
         {
             try
             {
@@ -19,10 +20,10 @@ namespace EGT.ApiGateway.ApplicationServices
 
                 if (_sessions.ContainsKey(sessionId))
                 {
-                    return _sessions[sessionId];
+                    return Task.FromResult(_sessions[sessionId]);
                 }
 
-                return null;
+                return Task.FromResult((UserSession)null);
             }
             finally
             {
@@ -30,7 +31,7 @@ namespace EGT.ApiGateway.ApplicationServices
             }
         }
 
-        public (UserSession, bool) CreateSession(UserSession userSession, int ttlInSeconds)
+        public Task<(UserSession, bool)> CreateSession(UserSession userSession, int ttlInSeconds)
         {
             try
             {
@@ -43,7 +44,7 @@ namespace EGT.ApiGateway.ApplicationServices
                 {
                     // throw new AlreadyExistsException();
                     // Not specified behavior at this scenario.
-                    return (null, false);
+                    return Task.FromResult(((UserSession)null, false));
                 }
             }
             finally
@@ -51,7 +52,7 @@ namespace EGT.ApiGateway.ApplicationServices
                 _lock.ReleaseWriterLock();
             }
 
-            return (_sessions[userSession.SessionId], true);
+            return Task.FromResult((_sessions[userSession.SessionId], true));
         }
     }
 }

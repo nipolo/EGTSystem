@@ -5,10 +5,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using EGT.ApiGateway.ApplicationServices;
+using EGT.ApiGatewayGateway.ApplicationServices;
 
 using Autofac;
-using StackExchange.Redis;
-using EGT.ApiGatewayGateway.ApplicationServices;
+//using StackExchange.Redis;
+using BeetleX.Redis;
 
 namespace EGT.ApiGateway
 {
@@ -31,7 +32,6 @@ namespace EGT.ApiGateway
         // Don't build the container; that gets done for you by the factory.
         public void ConfigureContainer(ContainerBuilder builder)
         {
-            // builder.RegisterType<InMemorySessionService>().As<ISessionService>().SingleInstance();
 
             var redisConfiguration = new RedisConfiguration();
             Configuration.Bind(nameof(RedisConfiguration), redisConfiguration);
@@ -39,15 +39,29 @@ namespace EGT.ApiGateway
             var sessionConfiguration = new SessionConfiguration();
             Configuration.Bind(nameof(SessionConfiguration), sessionConfiguration);
 
-            builder.RegisterInstance(ConnectionMultiplexer.Connect(redisConfiguration.ConnectionString))
-                .As<ConnectionMultiplexer>()
+            //builder.RegisterInstance(ConnectionMultiplexer.Connect(redisConfiguration.Host + ":" + redisConfiguration.Port))
+            //   .As<ConnectionMultiplexer>()
+            //   .SingleInstance();
+            var redisDB = DefaultRedis.Instance;
+            redisDB.DataFormater = new JsonFormater();
+            redisDB.Host.AddWriteHost(redisConfiguration.Host, redisConfiguration.Port);
+
+            builder.RegisterInstance(redisDB)
+                .As<RedisDB>()
                 .SingleInstance();
 
-            builder.RegisterType<RedisCacheSessionService>()
+            // builder.RegisterType<InMemorySessionService>().As<ISessionService>().SingleInstance();
+            //builder.RegisterType<StackExchangeRedisSessionService>()
+            //    .As<ISessionService>()
+            //    .SingleInstance();
+            builder.RegisterType<SessionServiceBeetleXRedis>()
                 .As<ISessionService>()
                 .SingleInstance();
 
-            builder.RegisterType<StatisticsService>()
+            //builder.RegisterType<StatisticsServiceStackExchangeRedis>()
+            //    .As<IStatisticsService>()
+            //    .SingleInstance();
+            builder.RegisterType<StatisticsServiceBeetleXRedis>()
                 .As<IStatisticsService>()
                 .SingleInstance();
 

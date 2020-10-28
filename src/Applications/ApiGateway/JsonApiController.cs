@@ -5,6 +5,7 @@ using EGT.ApiGateway.DomainModels;
 using EGT.ApiGateway.Dto;
 using EGT.ApiGateway.ApplicationServices;
 using EGT.ApiGatewayGateway.ApplicationServices;
+using System.Threading.Tasks;
 
 namespace EGT.ApiGateway
 {
@@ -26,7 +27,7 @@ namespace EGT.ApiGateway
         }
 
         [HttpPost("json_api/insert")]
-        public ActionResult Insert(InsertSessionJsonDto sessionCommand)
+        public async Task<ActionResult> Insert(InsertSessionJsonDto sessionCommand)
         {
             var userSession = new UserSession()
             {
@@ -35,22 +36,22 @@ namespace EGT.ApiGateway
                 SessionId = sessionCommand.SessionId,
                 Timestamp = sessionCommand.Timestamp
             };
-            (_, var isNew)= _sessionService.CreateSession(userSession, _sessionConfiguration.TTL);
+            (_, var isNew)= await _sessionService.CreateSession(userSession, _sessionConfiguration.TTL);
 
             if (!isNew)
             {
                 return Ok(new JsonApiError() { ErrorCode = ErrorCodeEnum.SessionAlreadyExists });
             }
 
-            _statisticsService.LogSessionPerUser(sessionCommand.ProducerId, sessionCommand.SessionId, DateTimeOffset.Now.ToUnixTimeSeconds() + _sessionConfiguration.TTL);
+            await _statisticsService.LogSessionPerUser(sessionCommand.ProducerId, sessionCommand.SessionId, DateTimeOffset.Now.ToUnixTimeSeconds() + _sessionConfiguration.TTL);
 
             return Ok();
         }
 
         [HttpPost("json_api/find")]
-        public ActionResult Find(FindSessionJsonDto findSessionCommand)
+        public async Task<ActionResult> Find(FindSessionJsonDto findSessionCommand)
         {
-            var userSession = _sessionService.GetSession(findSessionCommand.SessionId);
+            var userSession = await _sessionService.GetSession(findSessionCommand.SessionId);
 
             return Ok(userSession);
         }

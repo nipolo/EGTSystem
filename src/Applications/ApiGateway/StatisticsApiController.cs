@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
 using EGT.ApiGatewayGateway.ApplicationServices;
@@ -17,9 +18,9 @@ namespace EGT.ApiGateway
         }
 
         [HttpGet("statistics_api/get_sessions")]
-        public ActionResult<List<int>> GetSessions(string userId)
+        public async Task<ActionResult<List<int>>> GetSessions(string userId)
         {
-            var sessions = _statisticsService.GetSessions(userId);
+            var sessions = await _statisticsService.GetSessions(userId);
 
             return Ok(sessions);
         }

@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace EGT.ApiGatewayGateway.ApplicationServices
 {
     public interface IStatisticsService
     {
-        List<long> GetSessions(string userId);
+        Task<List<long>> GetSessions(string userId);
 
-        void LogSessionPerUser(string userId, long sessionId, long sessionScore);
+        Task LogSessionPerUser(string userId, long sessionId, long sessionScore);
     }
 }

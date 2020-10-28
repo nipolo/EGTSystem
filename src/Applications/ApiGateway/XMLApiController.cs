@@ -34,7 +34,7 @@ namespace EGT.ApiGateway
             if (command is XMLCommandEnterSessionDto)
             {
                 var enterSessionDto = command as XMLCommandEnterSessionDto;
-                _sessionService.CreateSession(new UserSession()
+                await _sessionService.CreateSession(new UserSession()
                 {
                     RequestId = enterSessionDto.Id,
                     Player = enterSessionDto.Player,
@@ -48,7 +48,7 @@ namespace EGT.ApiGateway
             if (command is XMLCommandGetSessionDto)
             {
                 var enterSessionDto = command as XMLCommandGetSessionDto;
-                var session = _sessionService.GetSession(enterSessionDto.SessionId);
+                var session = await _sessionService.GetSession(enterSessionDto.SessionId);
 
                 return Ok(session);
             }
