@@ -2,11 +2,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 
-using EGT.ApiGateway.ApplicationServices;
-
 using StackExchange.Redis;
 
-namespace EGT.ApiGatewayGateway.ApplicationServices
+namespace EGT.ApiGateway.ApplicationServices
 {
     public class StatisticsServiceStackExchangeRedis : IStatisticsService
     {

@@ -1,15 +1,12 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
 using EGT.ApiGateway.ApplicationServices;
-using EGT.ApiGateway.DomainModels;
 
 using Xunit;
 using BeetleX.Redis;
 using StackExchange.Redis;
-using EGT.ApiGatewayGateway.ApplicationServices;
-using System.Collections.Generic;
 
 namespace EGT.ApiGateway.Tests
 {

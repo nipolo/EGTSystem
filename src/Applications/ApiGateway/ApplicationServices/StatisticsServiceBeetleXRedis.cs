@@ -2,11 +2,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 
-using EGT.ApiGateway.ApplicationServices;
-
 using BeetleX.Redis;
 
-namespace EGT.ApiGatewayGateway.ApplicationServices
+namespace EGT.ApiGateway.ApplicationServices
 {
     public class StatisticsServiceBeetleXRedis : IStatisticsService
     {

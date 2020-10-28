@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using EGT.ApiGateway.ApplicationServices;
-using EGT.ApiGatewayGateway.ApplicationServices;
 
 using Autofac;
 //using StackExchange.Redis;

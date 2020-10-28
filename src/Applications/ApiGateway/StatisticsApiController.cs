@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
-using EGT.ApiGatewayGateway.ApplicationServices;
+using EGT.ApiGateway.ApplicationServices;
 
 namespace EGT.ApiGateway
 {

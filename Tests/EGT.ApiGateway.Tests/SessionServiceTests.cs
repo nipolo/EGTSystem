@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using EGT.ApiGateway.ApplicationServices;
 using EGT.ApiGateway.DomainModels;
 
-using Xunit;
 using BeetleX.Redis;
 using StackExchange.Redis;
+using Xunit;
 
 namespace EGT.ApiGateway.Tests
 {

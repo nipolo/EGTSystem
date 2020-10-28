@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,13 +13,16 @@ namespace EGT.ApiGateway
     public class XMLApiController : ControllerBase
     {
         private readonly ISessionService _sessionService;
+        private readonly IStatisticsService _statisticsService;
         private readonly SessionConfiguration _sessionConfiguration;
 
         public XMLApiController(
-            ISessionService sessionService, 
+            ISessionService sessionService,
+            IStatisticsService statisticsService,
             SessionConfiguration sessionConfiguration)
         {
             _sessionService = sessionService;
+            _statisticsService = statisticsService;
             _sessionConfiguration = sessionConfiguration;
         }
 
@@ -41,6 +45,8 @@ namespace EGT.ApiGateway
                     SessionId = enterSessionDto.SessionId,
                     Timestamp = enterSessionDto.Timestamp
                 }, _sessionConfiguration.TTL);
+
+                await _statisticsService.LogSessionPerUser(enterSessionDto.Player.ToString(), enterSessionDto.SessionId, DateTimeOffset.Now.ToUnixTimeSeconds() + _sessionConfiguration.TTL);
 
                 return Ok();
             }

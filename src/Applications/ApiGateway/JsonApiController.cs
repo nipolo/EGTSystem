@@ -1,11 +1,10 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
 using EGT.ApiGateway.DomainModels;
 using EGT.ApiGateway.Dto;
 using EGT.ApiGateway.ApplicationServices;
-using EGT.ApiGatewayGateway.ApplicationServices;
-using System.Threading.Tasks;
 
 namespace EGT.ApiGateway
 {

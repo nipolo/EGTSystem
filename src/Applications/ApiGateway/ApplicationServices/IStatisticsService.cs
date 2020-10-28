@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace EGT.ApiGatewayGateway.ApplicationServices
+namespace EGT.ApiGateway.ApplicationServices
 {
     public interface IStatisticsService
     {
