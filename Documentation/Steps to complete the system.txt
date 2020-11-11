@@ -1,0 +1,53 @@
+GW:
+- RequestService (called from API)
+	- ReloadPendingMessages(GatewayId/GWConsumerId) 
+	- LoadRequest(sessionId, request) -> loads RequestEnvelop in the Stream req:insert
+	- ListenOn (streamId)
+InternalService
+- listen on req streams	 
+	-> req:insert
+		-> get latest message from req:insert event envelop
+		-> processes it (save in db and etc)
+		-> get back the response envelope to the stream resp:[gw_id]
+	
+
+Entities:
+	- RequestEnvelop
+		- RequestId
+		- Payload
+		- timestamp
+		
+	- Request
+		- RequestId
+		- ResultCode
+		- ResultPayload
+		- Producer/ExternalSystem_Id
+		- WorkerId
+		- GWId
+		
+	- ResponseEnvelop
+		- WorkerId
+		- PayloadResponse
+		
+		
+Draft notes:
+gw -> iservice : request:123:input - ttl3600
+request:123:result 
+
+statistics:reqpm:[timestamp_in_seconds] -> incr
+
+----------
+gw1_req: ---> 
+
+pubsub strategy:
+Internal services:
+is:1 -> pubsub object 
+is:2
+...
+is:n
+
+GW -> 
+
+gw:1
+gw:2
+...
